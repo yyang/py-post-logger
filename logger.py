@@ -4,6 +4,7 @@ import BaseHTTPServer
 import cgi
 import logging
 import logging.handlers
+import json
 
 # set up logger
 LOG_FILENAME = 'analytics.out'
@@ -19,19 +20,16 @@ logger.setLevel(logging.INFO)
 
 
 # set up HTTP server
-PORT = 8000
+PORT = 4000
 
 # set up HTTP request handler
 class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
-        form = cgi.FieldStorage(
-            fp      = self.rfile,
-            headers = self.headers,
-            environ = {'REQUEST_METHOD':'POST',
-                       'CONTENT_TYPE':self.headers['Content-Type'],
-                      })
-        if "analytics" in form:
-            logger.info(form["analytics"].value)
+        content_len = int(self.headers.getheader('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        analytics_content = json.loads(post_body)
+        if "analytics" in analytics_content:
+            logger.info(analytics_content["analytics"])
         self.send_response(200)
 # enable HTTP service
 httpd = BaseHTTPServer.HTTPServer(('', PORT), ServerHandler)
