@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
 import BaseHTTPServer
-import cgi
-import logging
-import logging.handlers
+import logging, logging.handlers
 import json
 
 # set up logger
@@ -25,16 +23,19 @@ PORT = 8001
 # set up HTTP request handler
 class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
+        self.send_response(400)
+        self.end_headers()
 
     def do_POST(self):
         content_len = int(self.headers.getheader('content-length', 0))
         post_body = self.rfile.read(content_len)
-        analytics_content = json.loads(post_body)
-        if "analytics" in analytics_content:
-            logger.info(analytics_content["analytics"])
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        try:
+            analytics_content = json.loads(post_body)
+            if "analytics" in analytics_content:
+                logger.info(analytics_content["analytics"])
+            self.send_response(200)
+        except (ValueError, RuntimeError, TypeError, NameError):
+            self.send_response(400)
         self.end_headers()
 
 # enable HTTP service
