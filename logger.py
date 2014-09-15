@@ -1,26 +1,30 @@
 #!/usr/bin/python
 
+import ConfigParser
+import os
 import BaseHTTPServer
-import logging, logging.handlers
 import json
+import logging, logging.handlers
 
-# set up logger
-LOG_FILENAME = 'analytics.out'
+# config files
+config = ConfigParser.ConfigParser()
+config.read("config.ini")
 
-# set up handler and formatter
+# logfile path and name
+current_path = os.path.dirname(os.path.realpath(__file__));
+log_filename = os.path.join(current_path,
+                            config.get('py_logger', 'log_path'),
+                            config.get('py_logger', 'log_filename'))
+
+# logger and handler
 logger    = logging.getLogger('analytics')
-handler   = logging.handlers.TimedRotatingFileHandler(LOG_FILENAME, 'D', 1, 0, None, False, False)
+handler   = logging.handlers.TimedRotatingFileHandler(log_filename, 'D', 1, 0, None, False, False)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
-# add formater and handler to logger
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-
-# set up HTTP server
-PORT = 8001
-
-# set up HTTP request handler
+# http handler
 class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(400)
@@ -39,6 +43,8 @@ class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
 
 # enable HTTP service
-httpd = BaseHTTPServer.HTTPServer(('', PORT), ServerHandler)
-print "Serving HTTP POST logger on port", PORT, "..."
+port  = config.getint('py_logger', 'port')
+httpd = BaseHTTPServer.HTTPServer(('', port), ServerHandler)
 httpd.serve_forever()
+
+print "Serving HTTP POST logger on port", port, "..."
