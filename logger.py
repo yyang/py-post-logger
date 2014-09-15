@@ -34,6 +34,9 @@ class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         if "analytics" in analytics_content:
             logger.info(analytics_content["analytics"])
         self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.end_headers()
+
 # enable HTTP service
 httpd = BaseHTTPServer.HTTPServer(('', PORT), ServerHandler)
 print "Serving HTTP POST logger on port", PORT, "..."
