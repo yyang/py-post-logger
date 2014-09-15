@@ -20,7 +20,7 @@ logger.setLevel(logging.INFO)
 
 
 # set up HTTP server
-PORT = 4000
+PORT = 8001
 
 # set up HTTP request handler
 class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
