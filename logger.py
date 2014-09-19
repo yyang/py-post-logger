@@ -7,7 +7,7 @@ import logging, logging.handlers
 
 # logfile path and name
 current_path = os.path.dirname(os.path.abspath(__file__));
-log_filename = os.path.join('/edx/var/pseudo_analytcis', 'analytics.log');
+log_filename = os.path.join('/edx/var/pseudo_analytics', 'analytics.log');
 
 # logger and handler
 logger    = logging.getLogger('analytics')
