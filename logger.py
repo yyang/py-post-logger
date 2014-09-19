@@ -1,20 +1,13 @@
 #!/usr/bin/python
 
-import ConfigParser
 import os
 import BaseHTTPServer
 import json
 import logging, logging.handlers
 
-# config files
-config = ConfigParser.ConfigParser()
-config.read("config.ini")
-
 # logfile path and name
-current_path = os.path.dirname(os.path.realpath(__file__));
-log_filename = os.path.join(current_path,
-                            config.get('py_logger', 'log_path'),
-                            config.get('py_logger', 'log_filename'))
+current_path = os.path.dirname(os.path.abspath(__file__));
+log_filename = os.path.join('/edx/var/pseudo_analytcis', 'analytics.log');
 
 # logger and handler
 logger    = logging.getLogger('analytics')
@@ -43,7 +36,7 @@ class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         self.end_headers()
 
 # enable HTTP service
-port  = config.getint('py_logger', 'port')
+port  = 8001 
 httpd = BaseHTTPServer.HTTPServer(('', port), ServerHandler)
 httpd.serve_forever()
 
