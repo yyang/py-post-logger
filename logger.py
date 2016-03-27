@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         logger.info('GET ' + self.path)
-        logger.info('From: ' + str(tuple(self.client_address.split(', '))))
+        logger.info('From: ' + str(self.client_address(temp.split(', '))))
         self.send_response(200, 'success')
         self.end_headers()
 
@@ -29,7 +29,7 @@ class ServerHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         content_len = int(self.headers.getheader('content-length', 0))
         post_body = self.rfile.read(content_len)
         logger.info('POST ' + self.path)
-        logger.info('From: ' + str(tuple(self.client_address.split(', '))))
+        logger.info('From: ' + str(self.client_address(temp.split(', '))))
         logger.info('Content' + post_body)
         self.send_response(200, 'success')
         self.end_headers()
